@@ -4,13 +4,9 @@
 from time import sleep
 import RPi.GPIO as GPIO, os, time
 
-input_pin = 18        # pin used to read anemometer
-led_pin = 25
-sleep_time = 5
-
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(input_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)  #pin that the anemometer is connected to
-GPIO.setup(led_pin, GPIO.OUT)   # pin that the LED is connected to
+GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)  #pin that the anemometer is connected to
+GPIO.setup(25, GPIO.OUT)   # pin that the LED is connected to
 
 timer = time.time()   # initialise the timer
 fast_time = -1        # TODO: future use
@@ -30,15 +26,15 @@ def wind_ping(channel):
         # will print the measurements to screen for each pulse detected
         print "Wind Speed: " + wind_str + " m/s, " + windmph_str + " mph, time: " + cur_str
         timer = time.time()  #reset the timer for the next revolution
-        GPIO.output(led_pin, not GPIO.input(led_pin))  # alternate the LED state
+        GPIO.output(25, not GPIO.input(25))  # alternate the LED state
 
-GPIO.add_event_detect(input_pin,GPIO.FALLING, bouncetime=30)  #threaded event, to detect the 
+GPIO.add_event_detect(18,GPIO.FALLING, bouncetime=30)  #threaded event, to detect the 
   # voltage falling on anemometer (pin 18)
-GPIO.add_event_callback(input_pin,wind_ping)	# tell the event to call procedure above
+GPIO.add_event_callback(18,wind_ping)   # tell the event to call procedure above
 
 try:
    while True:  # loop to keep the program alive
-    sleep(sleep_time)
+    sleep(5)
 
 except KeyboardInterrupt:
     GPIO.cleanup()  # reset the GPIO pins when you press ctrl+c
